@@ -1,0 +1,319 @@
+body {
+    font: 14px sans-serif;
+    padding-top: 40px;
+}
+.background {
+    fill: none;
+}
+
+.table tbody>tr>td.vert-align{
+    vertical-align: middle;
+}
+
+h4 {
+	font-weight: bold;
+}
+
+
+
+
+
+
+
+
+
+.axis {
+    font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+.x.axis path {
+    display: none;
+}
+
+
+.bar {
+    fill: #7d7d7d;
+}
+
+.bar:hover {
+    fill: #000000;
+}
+
+
+.loc {
+    fill: none;
+    stroke: #f5f5f5;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.d3-tip {
+    line-height: 0.5;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 5px;
+    background: rgba(150, 150, 150, 0.8);
+    color: #fff;
+    border-radius: 2px;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+    box-sizing: border-box;
+    display: inline;
+    font-size: 8px;
+    width: 100%;
+    line-height: 1;
+    color: rgba(150, 150, 150, 0.8);
+    content: "\25BC";
+    position: absolute;
+    text-align: center;
+}
+
+/* Style northward tooltips differently */
+.d3-tip.n:after {
+    margin: -1px 0 0 0;
+    top: 100%;
+    left: 0;
+}
+
+
+
+
+.spacer {
+    padding: 15px 0;
+}
+
+
+.btn:focus,.btn:active:focus,.btn.active:focus,
+.btn.focus,.btn:active.focus,.btn.active.focus {
+    outline: none;
+}
+
+
+
+.module-small {
+    padding: 40px 0;
+}
+.module-top {
+    padding: 20px 0 40px 0;
+}
+
+/* Sections dividers */
+
+.divider-w {
+    border-top: 1px solid #eaeaea;
+    margin: 0;
+}
+
+.divider-d {
+    border-top: 1px solid #202020;
+    margin: 0;
+}
+
+.bg-dark {
+    background: #0f0f0f;
+    color: white;
+}
+
+
+
+
+
+
+.bs-docs-nav {
+    border-color: #4b4b4b;
+    background-color: #4b4b4b;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, .1);
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, .15)
+}
+
+.bs-docs-nav .navbar-collapse {
+    border-color: #4b4b4b
+}
+
+.bs-docs-nav .navbar-brand {
+    color: #fff
+}
+
+.bs-docs-nav .navbar-nav > li > a {
+    transition: color .15s linear;
+    color: #f9f1f1
+}
+
+.bs-docs-nav .navbar-nav > li > a:hover {
+    color: #fff
+}
+
+.bs-docs-nav .navbar-nav > .active > a, .bs-docs-nav .navbar-nav > .active > a:hover {
+    background-color: #4b4b4b;
+    color: #fff
+}
+
+.bs-docs-nav .navbar-toggle {
+    border-color: #4b4b4b
+}
+
+.bs-docs-nav .navbar-toggle:hover {
+    border-color: #4b4b4b;
+    background-color: #4b4b4b
+}
+
+.nav-padded {padding:80px 0 0 0;}
+
+
+.bs-header {
+    padding: 30px 15px 40px;
+    font-size: 16px;
+    text-align: center;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, .15)
+}
+
+.bs-header h1, .bs-header h4 {
+    color: #fff
+}
+
+.bs-header p {
+    font-weight: 300;
+    line-height: 1.5
+}
+
+.bs-header .container {
+    position: relative
+}
+
+@media (min-width:768px) {
+    .bs-header {
+        font-size: 21px;
+        text-align: left
+    }
+
+    .bs-header h1 {
+        font-size: 60px;
+        line-height: 1
+    }
+}
+
+@media (min-width:992px) {
+    .bs-header h1, .bs-header p {
+        margin-right: 200px
+    }
+}
+
+.bs-docs-home, .bs-header {
+    color: #c8c8c8;
+    background: #4b4b4b;
+    padding-bottom: 20px
+}
+
+
+@media (max-width:991px) {
+    .bs-sidebar.affix {
+        position: static !important
+    }
+}
+
+.bs-sidenav {
+    margin-top: 40px;
+    margin-bottom: 20px;
+    width: 124px
+}
+
+.bs-sidebar .nav > li > a {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #999;
+    padding: 4px 15px;
+    text-align: right
+}
+
+.bs-sidebar .nav > li > a:focus, .bs-sidebar .nav > li > a:hover {
+    padding-right: 14px;
+    color: #000000;
+    text-decoration: none;
+    background-color: transparent;
+    border-right: 1px solid #000000
+}
+
+.bs-sidebar .nav > .active:focus > a, .bs-sidebar .nav > .active:hover > a,
+.bs-sidebar .nav > .active > a {
+    padding-right: 13px;
+    font-weight: 700;
+    color: #000000;
+    background-color: transparent;
+    border-right: 2px solid #000000
+}
+
+.bs-sidebar .nav .nav {
+    display: none;
+    padding-bottom: 10px
+}
+
+.bs-sidebar .nav .nav > li > a {
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-right: 30px;
+    font-size: 12px;
+    font-weight: 400
+}
+
+.bs-sidebar .nav .nav > li > a:focus, .bs-sidebar .nav .nav > li > a:hover {
+    padding-right: 29px
+}
+
+.bs-sidebar .nav .nav > .active:focus > a, .bs-sidebar .nav .nav > .active:hover > a,
+.bs-sidebar .nav .nav > .active > a {
+    font-weight: 500;
+    padding-right: 28px
+}
+
+@media (min-width:992px) {
+    .bs-sidebar .nav > .active > ul {
+        display: block
+    }
+
+    .bs-sidebar.affix .bs-sidenav, .bs-sidebar.affix-bottom .bs-sidenav {
+        margin-top: 0;
+        margin-bottom: 0
+    }
+}
+
+@media (min-width:1200px) {
+    .bs-sidebar {
+        margin-right: 30px
+    }
+}
+
+
+.input-xs, select.input-xs {
+  height: 20px;
+  line-height: 20px;
+}
+
+.white-text {
+    color: white;
+}
+
+.navbar-header {min-width: 100%;}
+.navbar-selects {padding: 16px 0 0 0;}
