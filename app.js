@@ -517,7 +517,7 @@ angular.module('myApp', ['mgcrea.ngStrap'])
                         if (Object.keys(scope.candidate).length && scope.domainMax){
 
                             function supporting(d){ if (d){return d.id} }
-                            var ctte_ids = [scope.candidate.Principal.id].concat(scope.candidate.Supporting.map(supporting)).toString()
+                            var ctte_ids = [scope.candidate.Principal.id].concat(scope.candidate.Supporting.map(supporting)).toString();
 
                             vizAPI.get_receipts_disbursements_by_committees(ctte_ids, scope.cycle)
                                 .success(function(json){
