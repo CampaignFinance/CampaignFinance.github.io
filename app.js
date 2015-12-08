@@ -427,7 +427,7 @@ angular.module('myApp', ['mgcrea.ngStrap'])
 
             template:
             '<div>' +
-                'Contributions > $200 to {{candidate.Principal.name}} by {{state_county}} <br><br>' +
+                '<h5>Contributions > $200 to {{candidate.Principal.name}} by {{state_county}}</h5> <br><br>' +
                 '<div class="btn-toolbar">'+
                     '<div class="btn-group btn-group-xs" ng-model="state_fips" bs-radio-group>'+
                         '<label class="btn btn-default"><input type="radio" class="btn btn-default" value="state">State</label>' +
@@ -478,7 +478,7 @@ angular.module('myApp', ['mgcrea.ngStrap'])
 
             template:
             '<div>' +
-                'Contributions to {{candidate.Principal.name}} by Size' +
+                '<h5>Contributions to {{candidate.Principal.name}} by Size</h5>' +
                 '<div class="chart"></div>' +
             '</div>'
         }
@@ -549,7 +549,7 @@ angular.module('myApp', ['mgcrea.ngStrap'])
 
             template:
             '<div>' +
-            '<div style="padding: 15px 0;"> Monthy Fundraising and Spending by {{candidate.CAND_NAME}}\'s Principal Committee and Affiliated Groups</div>' +
+            '<div style="padding: 15px 0;"> <h5>Monthy Fundraising and Spending by {{candidate.CAND_NAME}}\'s Principal Candiate Committee ({{candidate.Principal.name}}) and Affiliated Groups</h5></div>' +
             '<div class="chart" ></div>' +
                 '<div style="padding: 15px 25px; font-size: 16px">' +
                     '<span>Total Raised: <strong>{{receipts}}</strong></span>' +

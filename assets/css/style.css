@@ -1,6 +1,8 @@
 body {
-    font: 14px "georgia", sans-serif;
-    padding-top: 40px;}
+    font: 14px "georgia", serif;
+    padding-top: 40px;
+}
+
 
 .background {
     fill: none;
@@ -14,7 +16,10 @@ h4 {
 	font-weight: bold;
 }
 
-
+h5 {
+	font-weight: bold;
+    font-size: 14px;
+}
 
 
 
@@ -23,7 +28,7 @@ h4 {
 
 
 .axis {
-    font: 10px sans-serif;
+    font: 10px "georgia", serif;
 }
 
 .axis path,
