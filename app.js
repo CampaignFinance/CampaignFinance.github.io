@@ -4,26 +4,14 @@ angular.module('myApp', ['mgcrea.ngStrap'])
 
         $scope.model = {
             cycles: [],
-            cycle: null,
             candidates: [{},{}],
             outsideGroups: [{},{}],
             mapData: null,
             candidateJson: null,
             monthlyRevEx: {'left': 0, 'right': 0},
+            wholeCycle: {'left': 0, 'right': 0},
             choropleth: {'left': 0, 'right': 0}
         };
-
-        // Initialize by getting json object for candidate
-        vizAPI.get_candiates()
-            .success(function(json){
-                $scope.model.candidateJson = json;
-
-                var cycles = Object.keys($scope.model.candidateJson);
-                var cycleIndex = cycles.length - 2; // using 2012 as default for the moment
-                $scope.model.cycles = cycles;
-                $scope.model.cycle = cycles[cycleIndex];
-
-            });
 
     }])
 
@@ -67,92 +55,148 @@ angular.module('myApp', ['mgcrea.ngStrap'])
         };
 
         factory.get_receipts_disbursements_by_committees = function(committee_ids, cycle) {
-            //console.log(BASE_URL+'/com_fins/'+ committee_ids +'/'+cycle);
             return $http.get(BASE_URL+'/com_fins/'+ committee_ids +'/'+cycle);
         };
 
+        factory.get_receipts_disbursements_by_candidates = function(candidate_ids, cycle) {
+            return $http.get(BASE_URL+'/cand_fins/'+ candidate_ids +'/'+cycle);
+        };
         return factory;
     })
 
-    .directive('candidateSelector', function(){
+
+
+
+
+    .directive('navbarSelector', ['vizAPI', '$window', function(vizAPI, $window){
         return {
             restrict: 'E',
             replace: true,
             scope: {
-                candidateJson: '=',
                 cycle: "=",
                 candidate: "=",
-                partyIndex: "="
+                partyIndex: "=",
+                candidateJson: "="
             },
 
             link:
                 function(scope, element, attrs) {
-                    scope.ddOptions = {};
 
-                    function getParties(json, cycle) {
-                        return Object.keys(json[cycle]);
-                    }
+                    scope.innerWidth = $window.innerWidth;
 
-                    function getCandiates(json, cycle, party) {
-                        return json[cycle][party].map(function (candidate) {
-                            return candidate.CAND_NAME;
-                        });
-                    }
+                    scope.dropdownMouseEnter = function($event, item, level){
+                        var el = angular.element($event.currentTarget );
+                        el.addClass('open');
 
-                    function getCandidate(json, cycle, party, candidateIndex) {
-                        return json[cycle][party][candidateIndex];
-                    }
-
-
-                    scope.updateParties = function () {
-                        var parties = getParties(scope.candidateJson, scope.cycle);
-                        scope.ddOptions.parties = parties;
-                        scope.ddOptions.party = parties[+scope.partyIndex];
-                    };
-
-                    scope.updateCandidates = function () {
-                        var candidates = getCandiates(scope.candidateJson, scope.cycle, scope.ddOptions.party);
-                        var candidateIndex = 0;
-                        scope.ddOptions.candidates = candidates;
-                        scope.ddOptions.candidate = candidates[candidateIndex];
-                        scope.updateCandidate();
-                    };
-
-                    scope.updateCandidate = function () {
-
-                        scope.candidate = getCandidate(
-                            scope.candidateJson,
-                            scope.cycle,
-                            scope.ddOptions.party,
-                            scope.ddOptions.candidates.indexOf(scope.ddOptions.candidate)
-                        );
-                    };
-
-                    scope.$watchGroup(['candidateJson','cycle'], function () {
-                        if (scope.cycle) {
-                            scope.updateParties();
-                            scope.updateCandidates();
+                        if (level > 1) {
+                            return;
                         }
-                    });
+
+                        var subMenu = $event.currentTarget.getElementsByClassName('dropdown-menu')[0];
+                        var MenuLeftOffset = subMenu.offsetLeft;
+                        var Menu1LevelWidth = subMenu.offsetWidth;
+
+                        if (scope.innerWidth/4 - MenuLeftOffset > Menu1LevelWidth * 2){
+                            angular.element(subMenu).css('right', 'auto');
+                            angular.element(subMenu).css('left', '0');
+                        }else{
+                            angular.element(subMenu).css('right', '0');
+                            angular.element(subMenu).css('left', 'auto');
+                        }
+
+                        if ($event.currentTarget.getElementsByClassName('dropdown').length){
+                            var Menu2LevelWidth = subMenu.offsetWidth;
+                            if (scope.innerWidth/5 - MenuLeftOffset - Menu1LevelWidth < Menu2LevelWidth){
+                                angular.element(subMenu).addClass('left-side');
+                            }else{
+                                angular.element(subMenu).removeClass('left-side');
+                            }
+                        }
+
+                    };
+
+                    scope.dropdownMouseLeave = function($event, item){
+                        var el = angular.element($event.currentTarget);
+                        el.removeClass('open');
+                    };
+
+                    scope.clickHandler = function($event, item){
+
+                        if (typeof item.eventHandler === 'function'){
+                            item.eventHandler();
+                        }
+
+                        if (typeof item.properties !== 'undefined'){
+                            scope.candidate = item.properties;
+                            scope.cycle = item.properties.cycle;
+                            scope.navObj[0].title = scope.candidate.CAND_NAME +" ("+ scope.candidate.cycle+")";
+
+                        }
+
+                    };
+
+                    // Initialize dropdown by getting json object for candidate
+                    vizAPI.get_candiates()
+                        .success(function(json){
+                            var cycles =  Object.keys(json);
+                            var cycleIndex = cycles.length - 2; // using 2012 as default for the moment
+                            var cycle = cycles[cycleIndex];
+                            var parties = Object.keys(json[cycle]);
+                            var party = parties[+scope.partyIndex];
+                            var candidates = json[cycle][party];
+
+                            scope.cycle = cycle;
+                            scope.candidate = candidates[0];
+                            scope.candidateJson = json;
+
+                            scope.navObj = [{
+                                'title': scope.candidate.CAND_NAME +" ("+ scope.candidate.cycle+")",
+                                'children': cycles.map(function(cycle) {
+                                    return {
+                                        'title': cycle,
+                                        'children': Object.keys(json[cycle]).map(function(party) {
+                                            return {
+                                                'title': party,
+                                                'children': json[cycle][party].map(function(candidate) {
+                                                    return {
+                                                        'title': candidate.CAND_NAME,
+                                                        'properties': candidate
+                                                    }
+                                                })
+                                            }
+                                        })
+                                    }
+                                })
+                            }];
+
+
+                        });
+
+
                 },
 
             template:
-            '<div class="form-inline">'+
-                '<div class="form-group">' +
-                    '<label for="partySelector" class="white-text">Party:&nbsp;</label>' +
-                    '<select id="partySelector" ng-model="ddOptions.party" ng-change="updateCandidates()"' +
-                    'ng-options="p for p in ddOptions.parties" class="form-control input-xs">' +
-                    '</select>' +
-                '</div>&nbsp;' +
-                '<div class="form-group">' +
-                    '<label for="candidateSelector" class="white-text">Candidate:&nbsp;</label>' +
-                    '<select id="candidateSelector" ng-model="ddOptions.candidate" ng-change="updateCandidate(c.value)"' +
-                    'ng-options="c for c in ddOptions.candidates" class="form-control input-xs">' +
-                    '</select>' +
-                '</div>' +
+            '<div class="collapse navbar-collapse" id="custom-collapse">'+
+                '<script type="text/ng-template" id="navTree">'+
+                    '<a ng-class="{\'dropdown-toggle\':item.children}" ng-href="{{item.link}}" class="section-scroll"' +
+                        'ng-click="clickHandler($event, item)">{{ item.title }}</a>'+
+                    '<ul ng-if="item.children" class="dropdown-menu">'+
+                        '<li ng-repeat="item in item.children track by $index" ng-include="\'navTree\'"' +
+                            'ng-class="{\'dropdown\': item.children}" ng-mouseenter="dropdownMouseEnter($event, item, 2)"' +
+                            'ng-mouseleave="dropdownMouseLeave($event, item)" >' +
+                        '</li>'+
+                    '</ul>'+
+                '</script>'+
+
+                '<ul class="nav navbar-nav">'+
+                    '<li ng-repeat="item in navObj track by $index" ng-include="\'navTree\'" ng-class="{\'dropdown\': item}"' +
+                        'ng-mouseenter="dropdownMouseEnter($event, item, 1)" ng-mouseleave="dropdownMouseLeave($event, item)" >' +
+                    '</li>'+
             '</div>'
-        }
-    })
+    }
+    }])
+
+
 
         .directive('byEmployer', ['vizAPI', function(vizAPI){
         return {
@@ -168,8 +212,8 @@ angular.module('myApp', ['mgcrea.ngStrap'])
                     var formatValue = d3.format(".2s"),
                         formatCurrency = function(d) { return "$" + formatValue(d); };
                     scope.topk = 5;
-                    scope.$watchGroup(['candidate', 'topk'], function() {
-                        if (Object.keys(scope.candidate).length){
+                    scope.$watchGroup(['candidate', 'topk', 'cycle'], function() {
+                        if (Object.keys(scope.candidate).length  && scope.cycle>0){
                             vizAPI.get_by_employer(scope.candidate.Principal.id, scope.cycle, scope.topk)
                                 .success(function(json){
                                     scope.employers = json;
@@ -426,8 +470,8 @@ angular.module('myApp', ['mgcrea.ngStrap'])
                 },
 
             template:
-            '<div>' +
-                '<h5>Contributions > $200 to {{candidate.Principal.name}} by {{state_county}}</h5> <br><br>' +
+            '<div style="font-weight: bold">' +
+                'Contributions > $200 to {{candidate.Principal.name}} by {{state_county}} <br><br>' +
                 '<div class="btn-toolbar">'+
                     '<div class="btn-group btn-group-xs" ng-model="state_fips" bs-radio-group>'+
                         '<label class="btn btn-default"><input type="radio" class="btn btn-default" value="state">State</label>' +
@@ -477,8 +521,8 @@ angular.module('myApp', ['mgcrea.ngStrap'])
                 },
 
             template:
-            '<div>' +
-                '<h5>Contributions to {{candidate.Principal.name}} by Size</h5>' +
+            '<div style="font-weight: bold">' +
+                'Contributions to {{candidate.Principal.name}} by Size' +
                 '<div class="chart"></div>' +
             '</div>'
         }
@@ -549,7 +593,7 @@ angular.module('myApp', ['mgcrea.ngStrap'])
 
             template:
             '<div>' +
-            '<div style="padding: 15px 0;"> <h5>Monthy Fundraising and Spending by {{candidate.CAND_NAME}}\'s Principal Candiate Committee ({{candidate.Principal.name}}) and Affiliated Groups</h5></div>' +
+            '<div style="padding: 15px 0; font-weight: bold"> Monthly Fundraising and Spending by {{candidate.CAND_NAME}}\'s Principal Committee and Affiliated Groups</div>' +
             '<div class="chart" ></div>' +
                 '<div style="padding: 15px 25px; font-size: 16px">' +
                     '<span>Total Raised: <strong>{{receipts}}</strong></span>' +
@@ -561,14 +605,76 @@ angular.module('myApp', ['mgcrea.ngStrap'])
     }])
 
 
+    .directive('wholeCycle', ['vizAPI', function(vizAPI){
+        return {
+            restrict: 'E',
+            replace: true,
+            scope: {
+                cycle: '=',
+                candidateJson: "=",
+                height: '=',
+                width: '=',
+                domainMax: "=",
+                pos: "="
+            },
+
+            link:
+                function(scope, element, attrs){
+
+                    var chartEl = d3.select(element[0]).selectAll(".chart");
+
+                    scope.$watchGroup(['cycle', 'domainMax.left', 'domainMax.right'], function() {
+                        if (scope.cycle>0 && scope.domainMax){
+
+                            var candidate_ids = Object.keys(scope.candidateJson[scope.cycle]).map(function(party) {
+                                return scope.candidateJson[scope.cycle][party].map(function(candidate) {
+                                    if(candidate.CAND_ID){ return candidate.CAND_ID }
+                                })
+                            });
+                            candidate_ids = [].concat.apply([], candidate_ids);
+                            candidate_ids = candidate_ids.filter(function(n){ return n != undefined });
 
 
 
 
 
+                            vizAPI.get_receipts_disbursements_by_candidates(candidate_ids, scope.cycle)
+                                .success(function(json){
+
+                                    var chart = d3.custom['horizontalBar']()
+                                        .h(scope.height)
+                                        .w(scope.width);
+
+                                    chartEl.datum([json, scope.domainMax, scope.pos]).call(chart);
+
+                                    var formatValue = d3.format("0,000"),
+                                        formatCurrency = function(d) { return "$" + formatValue(Math.round(d/10000)/100) + "M"; };
+
+                                    scope.receipts = formatCurrency(d3.sum(json.map(function(d) {
+                                        return d3.sum(d.data.map(function(d) { return d.data.receipts }))
+                                    })));
+                                    scope.expenditures = formatCurrency(d3.sum(json.map(function(d) {
+                                        return d3.sum(d.data.map(function(d) { return d.data.expenditures }))
+                                    })));
 
 
+                                });
+                        }
+                    });
+                },
 
+            template:
+            '<div>' +
+            '<div style="padding: 15px 0; font-weight: bold"> Monthly Fundraising and Spending by Major Candidates\' Principal Committees and Affiliated Groups in the {{cycle}} Election Cycle</div>' +
+            '<div class="chart" ></div>' +
+                '<div style="padding: 15px 25px; font-size: 16px">' +
+                    '<span>Total Raised: <strong>{{receipts}}</strong></span>' +
+                    '<span class="pull-right">Total Spent: <strong>{{expenditures}}</strong></span>' +
+                '</div>' +
+
+            '</div>'
+        }
+    }])
 
     .directive('customChart', function(){
         return {
